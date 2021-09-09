@@ -28,7 +28,7 @@ flags.DEFINE_integer('epochs', 50, 'Number of epochs to train.')
 flags.DEFINE_integer('hidden1', 16, 'Number of units in hidden layer 1.')
 flags.DEFINE_float('dropout', 0.3, 'Dropout rate (1 - keep probability).')
 flags.DEFINE_float('weight_decay', 1e-3, 'Weight for L2 loss on embedding matrix.')
-flags.DEFINE_float('alpha', 0.1, 'alpha balancing BGCN')
+flags.DEFINE_float('alpha', 0.1, 'alpha balancing MCGCN')
 
 
 checkpt_file = 'result/mcgcn_'+'.ckpt'
@@ -77,18 +77,8 @@ for item in data_labels:
 data_labels = np.array(ccc)
 
 
-
-
-
-
 adj, features_all, pattern_dis, geo_neighbor_adj, y_train, y_val, y_test, train_mask, val_mask, test_mask = load_data(data_adj, data_features, data_pattern_dis, data_geo_neighbor_adj, data_labels)
-
-
-
 A_geo = preprocess_geo(geo_neighbor_adj)
-
-
-
 
 data_labels_train = data_labels[:1794]
 data_labels_val = data_labels[1794:1794 + 384]
@@ -97,9 +87,6 @@ data_labels_test = data_labels[-384:]
 data_train_stats = {'mean': np.mean(data_labels_train), 'std': np.std(data_labels_train)}
 data_val_stats = {'mean': np.mean(data_labels_val), 'std': np.std(data_labels_val)}
 data_test_stats = {'mean': np.mean(data_labels_test), 'std': np.std(data_labels_test)}
-
-
-
 
 
 if FLAGS.model == 'mcgcn':
@@ -125,7 +112,6 @@ placeholders = {
 # Create model
 model = model_func(placeholders, input_dim=4, logging=True)
 sess = tf.Session()
-
 
 
 # Define model evaluation function
@@ -283,8 +269,6 @@ for epoch in range(FLAGS.epochs):#FLAGS.epochs
 
     if epoch == FLAGS.epochs - 1:
         saver.save(sess, checkpt_file)
-
-
 
 
 saver.restore(sess, checkpt_file)
